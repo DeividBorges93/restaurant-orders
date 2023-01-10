@@ -21,6 +21,24 @@ def count_food_requests(orders, food):
     return len([order for order in orders if order.get("food") == food])
 
 
+def count_client_never_requested_foods(orders, customer):
+    client_orders = filter_by_customer(orders, customer)
+    client_foods = set([order.get("food") for order in client_orders])
+    all_food = set([order.get("food") for order in orders])
+    never_requested_foods = all_food - client_foods
+
+    return never_requested_foods
+
+
+def get_client_never_attended_days(orders, customer):
+    client_orders = filter_by_customer(orders, customer)
+    client_days = set([order.get("day") for order in client_orders])
+    all_days = set([order.get("day") for order in orders])
+    never_attended_days = all_days - client_days
+
+    return never_attended_days
+
+
 def analyze_log(path_to_file):
     orders = log_to_dict(path_to_file, ["customer", "food", "day"])
 
@@ -30,8 +48,13 @@ def analyze_log(path_to_file):
     arnaldo_orders = filter_by_customer(orders, "arnaldo")
     arnaldo_ask_hamburguer = count_food_requests(arnaldo_orders, "hamburguer")
 
+    joao_never_asks = count_client_never_requested_foods(orders, "joao")
+    joao_didnot_come = get_client_never_attended_days(orders, "joao")
+
     with open("data/mkt_campaign.txt", "w") as file:
         file.write(
             f"{maria_consumes}\n"
             f"{arnaldo_ask_hamburguer}\n"
+            f"{joao_never_asks}\n"
+            f"{joao_didnot_come}\n"
         )
