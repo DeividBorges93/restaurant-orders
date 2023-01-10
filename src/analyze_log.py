@@ -3,9 +3,15 @@ from collections import Counter
 
 
 def log_to_dict(path_to_file, field_names):
-    with open(path_to_file, "r") as file:
-        reader = csv.DictReader(file, fieldnames=field_names)
-        return list(reader)
+    if path_to_file[-4:] != ".csv":
+        raise FileNotFoundError(f"Extensão inválida: '{path_to_file}'")
+
+    try:
+        with open(path_to_file, "r") as file:
+            reader = csv.DictReader(file, fieldnames=field_names)
+            return list(reader)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Arquivo inexistente: '{path_to_file}'")
 
 
 def filter_by_customer(orders, customer):
